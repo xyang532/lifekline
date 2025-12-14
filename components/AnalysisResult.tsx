@@ -31,34 +31,39 @@ const ScoreBar = ({ score }: { score: number }) => {
   );
 };
 
-const Card = ({ title, icon: Icon, content, score, colorClass, extraBadges }: any) => (
-  <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col h-full relative overflow-hidden">
-    <div className={`flex items-center justify-between mb-3 ${colorClass}`}>
-      <div className="flex items-center gap-2">
-        <Icon className="w-5 h-5" />
-        <h3 className="font-serif-sc font-bold text-lg">{title}</h3>
-      </div>
-      <Star className="w-4 h-4 opacity-50" />
-    </div>
-    
-    {/* Extra Badges for Crypto */}
-    {extraBadges && (
-      <div className="flex flex-wrap gap-2 mb-3">
-        {extraBadges}
-      </div>
-    )}
+const Card = ({ title, icon: Icon, content, score, colorClass, extraBadges }: any) => {
+  // Clean content: remove markdown bold symbols (**) to ensure uniform plain text look
+  const displayContent = content ? content.replace(/\*\*/g, '') : '';
 
-    <div className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap flex-grow">
-      {content}
-    </div>
-    {typeof score === 'number' && (
-      <div className="pt-4 mt-2 border-t border-gray-50">
-        <div className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wider">Rating</div>
-        <ScoreBar score={score} />
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col h-full relative overflow-hidden">
+      <div className={`flex items-center justify-between mb-3 ${colorClass}`}>
+        <div className="flex items-center gap-2">
+          <Icon className="w-5 h-5" />
+          <h3 className="font-serif-sc font-bold text-lg">{title}</h3>
+        </div>
+        <Star className="w-4 h-4 opacity-50" />
       </div>
-    )}
-  </div>
-);
+      
+      {/* Extra Badges for Crypto */}
+      {extraBadges && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {extraBadges}
+        </div>
+      )}
+
+      <div className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap flex-grow">
+        {displayContent}
+      </div>
+      {typeof score === 'number' && (
+        <div className="pt-4 mt-2 border-t border-gray-50">
+          <div className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wider">Rating</div>
+          <ScoreBar score={score} />
+        </div>
+      )}
+    </div>
+  );
+};
 
 const AnalysisResult: React.FC<AnalysisResultProps> = ({ analysis }) => {
   return (
@@ -127,7 +132,7 @@ const AnalysisResult: React.FC<AnalysisResultProps> = ({ analysis }) => {
           colorClass="text-blue-600" 
         />
         
-        {/* Feng Shui Analysis - New Added */}
+        {/* Feng Shui Analysis */}
         <Card 
           title="发展风水" 
           icon={Compass} 
@@ -195,7 +200,7 @@ const AnalysisResult: React.FC<AnalysisResultProps> = ({ analysis }) => {
                 </li>
               </ul>
               <p className="text-xs text-black leading-relaxed border-t border-gray-100 pt-2 text-justify">
-                注：币圈交易风险极高，命理分析仅供娱乐与性格参考，不构成任何投资建议。请对自己的资金负责。
+                注：命运还受环境和个人选择影响，八字趋势不能完全代表真实人生，命理学不是玄学，而是帮助我们在人生列车上做出更好选择的哲学工具。一命二运三风水 四积阴德五读书 六名七相八敬神 九遇贵人十养生。
               </p>
             </div>
           }

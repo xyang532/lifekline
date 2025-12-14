@@ -9,13 +9,12 @@
 
 ## 📸 项目预览
 
-![人生流年大运K线图](assets/screenshot1.png)
+![人生流年大运K线图](assets/1.png)
 *(图1：人生流年大运 K 线走势图)*
 
-![详细分析报告](assets/screenshot2.png)
+![详细分析报告](assets/2.png)
 *(图2：命理分析、币圈运势与风水建议)*
 
-> ⚠️ **提示**: 请将您的截图放入 `assets` 文件夹并命名为 `screenshot1.png` 和 `screenshot2.png`，或修改文档中的图片路径。
 
 ---
 

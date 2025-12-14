@@ -33,7 +33,31 @@ const ScoreBar = ({ score }: { score: number }) => {
 
 const Card = ({ title, icon: Icon, content, score, colorClass, extraBadges }: any) => {
   // Clean content: remove markdown bold symbols (**) to ensure uniform plain text look
-  const displayContent = content ? content.replace(/\*\*/g, '') : '';
+  // Ensure content is a string before calling replace to avoid "content.replace is not a function" error
+  let safeContent = '';
+  
+  if (typeof content === 'string') {
+    safeContent = content;
+  } else if (content === null || content === undefined) {
+    safeContent = '';
+  } else if (typeof content === 'object') {
+    // If AI returns an object or array (unexpected but possible), stringify it readable
+    try {
+      // If it's a simple array of strings, join them
+      if (Array.isArray(content)) {
+        safeContent = content.map(c => String(c)).join('\n');
+      } else {
+        // Fallback for object
+        safeContent = JSON.stringify(content); 
+      }
+    } catch (e) {
+      safeContent = String(content);
+    }
+  } else {
+    safeContent = String(content);
+  }
+
+  const displayContent = safeContent.replace(/\*\*/g, '');
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col h-full relative overflow-hidden">

@@ -71,4 +71,4 @@ export const BAZI_SYSTEM_INSTRUCTION = `
 // 系统状态开关
 // 1: 正常服务 (Normal)
 // 0: 服务器繁忙/维护 (Busy/Maintenance)
-export const API_STATUS: number = 1;
+export const API_STATUS: number = 0;

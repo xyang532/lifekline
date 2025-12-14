@@ -18,17 +18,24 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
   
   const { apiKey, apiBaseUrl, modelName } = input;
 
-  if (!apiKey || !apiKey.trim()) {
+  // FIX: Trim whitespace which causes header errors if copied with newlines
+  const cleanApiKey = apiKey ? apiKey.trim() : "";
+  const cleanBaseUrl = apiBaseUrl ? apiBaseUrl.trim().replace(/\/+$/, "") : "";
+  const targetModel = modelName && modelName.trim() ? modelName.trim() : "gemini-3-pro-preview";
+
+  if (!cleanApiKey) {
     throw new Error("请在表单中填写有效的 API Key");
   }
-  if (!apiBaseUrl || !apiBaseUrl.trim()) {
-    throw new Error("请在表单中填写有效的 API Base URL");
+  
+  // Check for non-ASCII characters to prevent obscure 'Failed to construct Request' errors
+  // If user accidentally pastes Chinese characters or emojis in the API key field
+  if (/[^\x00-\x7F]/.test(cleanApiKey)) {
+    throw new Error("API Key 包含非法字符（如中文或全角符号），请检查输入是否正确。");
   }
 
-  // Remove trailing slash if present
-  const cleanBaseUrl = apiBaseUrl.replace(/\/+$/, "");
-  // Use user provided model name or fallback
-  const targetModel = modelName && modelName.trim() ? modelName.trim() : "gemini-3-pro-preview";
+  if (!cleanBaseUrl) {
+    throw new Error("请在表单中填写有效的 API Base URL");
+  }
 
   const genderStr = input.gender === Gender.MALE ? '男 (乾造)' : '女 (坤造)';
   const startAgeInt = parseInt(input.startAge) || 1;
@@ -89,7 +96,7 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
     1. 确认格局与喜忌。
     2. 生成 **1-100 岁 (虚岁)** 的人生流年K线数据。
     3. 在 \`reason\` 字段中提供流年详批。
-    4. 生成带评分的命理分析报告。
+    4. 生成带评分的命理分析报告（包含性格分析、币圈交易分析、发展风水分析）。
     
     请严格按照系统指令生成 JSON 数据。
   `;
@@ -99,7 +106,7 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${cleanApiKey}`
       },
       body: JSON.stringify({
         model: targetModel, 
@@ -138,8 +145,12 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
         bazi: data.bazi || [],
         summary: data.summary || "无摘要",
         summaryScore: data.summaryScore || 5,
+        personality: data.personality || "无性格分析",
+        personalityScore: data.personalityScore || 5,
         industry: data.industry || "无",
         industryScore: data.industryScore || 5,
+        fengShui: data.fengShui || "建议多亲近自然，保持心境平和。",
+        fengShuiScore: data.fengShuiScore || 5,
         wealth: data.wealth || "无",
         wealthScore: data.wealthScore || 5,
         marriage: data.marriage || "无",
@@ -148,6 +159,11 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
         healthScore: data.healthScore || 5,
         family: data.family || "无",
         familyScore: data.familyScore || 5,
+        // Crypto Fields
+        crypto: data.crypto || "暂无交易分析",
+        cryptoScore: data.cryptoScore || 5,
+        cryptoYear: data.cryptoYear || "待定",
+        cryptoStyle: data.cryptoStyle || "现货定投",
       },
     };
   } catch (error) {
